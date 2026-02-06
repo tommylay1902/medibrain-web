@@ -15,10 +15,7 @@ const DocumentSection = async ({ search }: Props) => {
 }
 
 const DocumentSectionSuspense = async ({ search }: Props) => {
-  // const metadata = await data.json();
-  return (<div>
-    <DocumentView />
-  </div>)
+  return <DocumentView />
 }
 
 export default DocumentSection

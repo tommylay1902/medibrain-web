@@ -30,9 +30,6 @@ const UploadFile = () => {
       setSelectedFile(e.target.files![0])
       setIsLoading(true)
       try {
-        // place holder to test loading
-        // await new Promise(r => setTimeout(r, 3000))
-
         const response = await fetch(`${process.env.NEXT_PUBLIC_STIRLING_API_BASE_URL}/api/v1/analysis/document-properties`, {
           method: "POST",
           headers: {
@@ -67,6 +64,7 @@ const UploadFile = () => {
             metadataBody[key] = data[key];
           }
         })
+        console.table(metadataBody)
         formData.append("metadata", JSON.stringify(metadataBody))
         // const result = await editResponse.json();
       }

@@ -30,6 +30,7 @@ const SearchSection = () => {
 
   return (
     <Input
+      className={""}
       placeholder="Search for something...."
       value={searchVal}
       onChange={(e) => {
