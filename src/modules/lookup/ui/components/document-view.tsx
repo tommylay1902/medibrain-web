@@ -12,7 +12,7 @@ type DocumentViewProps = {
 }
 type Response = {
   content: string
-  fid: string
+  pdfFid: string
   title: string
   keywords: string
 }

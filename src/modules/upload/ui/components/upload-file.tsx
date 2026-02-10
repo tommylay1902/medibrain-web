@@ -48,7 +48,6 @@ const UploadFile = () => {
     }
   }
 
-
   async function onSubmit(data: DocumentMeta) {
     let endpoint = `${process.env.NEXT_PUBLIC_MEDIBRAIN_API_BASE_URL}/api/v1/document/upload`;
     const formData = new FormData();
@@ -64,9 +63,7 @@ const UploadFile = () => {
             metadataBody[key] = data[key];
           }
         })
-        console.table(metadataBody)
         formData.append("metadata", JSON.stringify(metadataBody))
-        // const result = await editResponse.json();
       }
 
 
@@ -78,7 +75,16 @@ const UploadFile = () => {
         body: formData
       })
 
-      // const result = await uploadResponse.json();
+      const { pdfFid } = await response.json();
+
+      formData.append("fid", pdfFid)
+      await fetch(`${process.env.NEXT_PUBLIC_MEDIBRAIN_API_BASE_URL}/api/v1/document/chunk`, {
+        method: "POST",
+        headers: {
+          "X-API-KEY": `${process.env.NEXT_PUBLIC_STIRLING_API_KEY}`
+        },
+        body: formData,
+      })
 
       toast.success("Succesfully uploaded document")
       const resetData: DocumentMeta = getResetData();
@@ -174,7 +180,7 @@ const UploadFile = () => {
                       </FieldLabel>
                       <Input
                         {...field}
-                        id="creator"
+                        id="creationDate"
                         value={field.value || ''}
                         aria-invalid={fieldState.invalid}
                         placeholder="undefined"
