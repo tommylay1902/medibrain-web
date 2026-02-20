@@ -29,6 +29,8 @@ export const DocumentMetaSchema = z.object({
   title: z.nullable(z.string())
 })
 
+export type DocumentMeta = z.infer<typeof DocumentMetaSchema>;
+
 export const getResetData = () => {
   const resetData: DocumentMeta = {
     title: null,
@@ -42,4 +44,3 @@ export const getResetData = () => {
   };
   return resetData;
 }
-export type DocumentMeta = z.infer<typeof DocumentMetaSchema>;

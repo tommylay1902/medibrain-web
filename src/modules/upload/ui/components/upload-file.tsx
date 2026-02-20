@@ -10,7 +10,6 @@ import { ChangeEvent, useState } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { toast } from "sonner"
 
-
 const UploadFile = () => {
   const [fileProvided, setFileProvided] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -66,7 +65,6 @@ const UploadFile = () => {
         formData.append("metadata", JSON.stringify(metadataBody))
       }
 
-
       const response = await fetch(endpoint, {
         method: "POST",
         headers: {
@@ -88,7 +86,6 @@ const UploadFile = () => {
 
       toast.success("Succesfully uploaded document")
       const resetData: DocumentMeta = getResetData();
-      reset(resetData)
 
       const input = document.getElementById('fileInput') as HTMLInputElement
       if (input) input.value = ''
@@ -102,7 +99,7 @@ const UploadFile = () => {
   return (
     <div className="flex flex-col justify-center max-w-md mx-auto items-center text-center">
       <Field className="text-center space-y-3">
-        <FieldLabel className="text-center text-lg font-semibold" htmlFor="fileInput">
+        <FieldLabel className="flex justify-center text-center text-lg font-semibold" htmlFor="fileInput">
           Document
         </FieldLabel>
 
@@ -258,9 +255,7 @@ const UploadFile = () => {
               >
                 Cancel
               </Button>
-
             </div>
-
           </form>
         </div>
 
