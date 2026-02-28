@@ -1,21 +1,24 @@
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Suspense } from "react"
+import { Suspense } from "react";
+import NoteView, { NoteResponse } from "../components/note-view";
 
 const NoteSection = async () => {
+  const loadNotes = fetch(
+    `${process.env.NEXT_PUBLIC_MEDIBRAIN_API_BASE_URL}/note`,
+  ).then((res) => res.json());
+
   return (
     <Suspense>
-      <NoteSectionSuspense />
+      <NoteSectionSuspense loadNotes={loadNotes} />
     </Suspense>
-  )
-}
+  );
+};
 
-const NoteSectionSuspense = async () => {
-  return <div className="flex flex-col flex-1">
-    <h3 className="mx-5 font-bold text-center">Notes</h3>
-    <ScrollArea className="mx-5 rounded-md h-45 border-black border">
-      <h2 className="flex justify-center justify-items-center items-center font-bold">No Notes Found</h2>
-    </ScrollArea >
-  </div >
-}
+const NoteSectionSuspense = async ({
+  loadNotes,
+}: {
+  loadNotes: Promise<NoteResponse[]>;
+}) => {
+  return <NoteView loadNotes={loadNotes} />;
+};
 
-export default NoteSection 
+export default NoteSection;
