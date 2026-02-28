@@ -6,6 +6,7 @@ import NoteList from "./note-list";
 
 export interface NoteResponse {
   id: string;
+  title: string;
   content: string;
   creation_date: string;
   tags: string[];

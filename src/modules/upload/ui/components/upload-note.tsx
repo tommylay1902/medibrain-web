@@ -15,6 +15,7 @@ import AddTagSelector from "./add-tag-selector";
 import { useEffect, useState } from "react";
 import { Tag } from "@/modules/shared/forms/add-tags-form";
 import { toast } from "sonner";
+import { GetToday } from "@/lib/utils";
 
 const UploadNote = () => {
   const {
@@ -25,6 +26,10 @@ const UploadNote = () => {
     formState: { errors, isDirty, dirtyFields },
   } = useForm<Note>({
     resolver: zodResolver(NoteSchema),
+    defaultValues: {
+      creationDate: GetToday(),
+      modificationDate: GetToday(),
+    },
   });
 
   const [tags, setTags] = useState<Tag[]>([]);
@@ -70,41 +75,17 @@ const UploadNote = () => {
     <div className="flex flex-col justify-center items-center justify-items-center mx-auto w-[50dvw]">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 w-full">
         <FieldGroup className="w-full">
-          <Controller
-            name="content"
-            control={control}
-            render={({ field, fieldState }) => (
-              <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="content">Content</FieldLabel>
-                <Textarea
-                  className="w-full max-h-30"
-                  {...field}
-                  id="content"
-                  value={field.value || ""}
-                  aria-invalid={fieldState.invalid}
-                  placeholder="Enter"
-                  autoComplete="off"
-                />
-                {fieldState.invalid && (
-                  <FieldError errors={[fieldState.error]} />
-                )}
-              </Field>
-            )}
-          />
           <div className="flex gap-x-2">
             <Controller
-              name="modificationDate"
+              name="title"
               control={control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="modificationDate">
-                    Modification Date
-                  </FieldLabel>
+                  <FieldLabel htmlFor="title">Title</FieldLabel>
                   <Input
-                    type="date"
-                    className="w-full"
+                    className="w-full max-h-30"
                     {...field}
-                    id="modificationDate"
+                    id="title"
                     value={field.value || ""}
                     aria-invalid={fieldState.invalid}
                     placeholder="Enter"
@@ -139,6 +120,28 @@ const UploadNote = () => {
               )}
             />
           </div>
+
+          <Controller
+            name="content"
+            control={control}
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor="content">Content</FieldLabel>
+                <Textarea
+                  className="w-full max-h-30"
+                  {...field}
+                  id="content"
+                  value={field.value || ""}
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Enter"
+                  autoComplete="off"
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
+            )}
+          />
           <AddTagSelector
             addTagHandler={addTagHandler}
             tags={tags}
