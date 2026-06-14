@@ -91,20 +91,7 @@ const UploadFile = () => {
         body: formData,
       });
 
-      const { pdfFid } = await response.json();
-
-      formData.append("fid", pdfFid);
-      await fetch(
-        `${process.env.NEXT_PUBLIC_MEDIBRAIN_API_BASE_URL}/document/chunk`,
-        {
-          method: "POST",
-          headers: {
-            "X-API-KEY": `${process.env.NEXT_PUBLIC_STIRLING_API_KEY}`,
-          },
-          body: formData,
-        },
-      );
-
+      const { jobId } = await response.json();
       toast.success("Succesfully uploaded document");
       const resetData: DocumentMeta = getResetData();
 

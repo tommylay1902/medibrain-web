@@ -27,8 +27,13 @@ const UploadNote = () => {
   } = useForm<Note>({
     resolver: zodResolver(NoteSchema),
     defaultValues: {
-      creationDate: GetToday(),
-      modificationDate: GetToday(),
+      note: {
+        title: "",
+        content: "",
+        creationDate: GetToday(),
+        modificationDate: GetToday(),
+      },
+      tags: [],
     },
   });
 
@@ -49,14 +54,15 @@ const UploadNote = () => {
   }, []);
 
   async function onSubmit(data: Note) {
-    const cdTimeStr = `${data.creationDate}`;
+    const cdTimeStr = `${data.note.creationDate}`;
     const formattedCD = new Date(cdTimeStr);
 
-    const mdTimeStr = `${data.creationDate}`;
+    const mdTimeStr = `${data.note.creationDate}`;
     const formattedMD = new Date(mdTimeStr);
 
-    data.creationDate = formattedCD.toISOString();
-    data.modificationDate = formattedMD.toISOString();
+    data.note.creationDate = formattedCD.toISOString();
+    data.note.modificationDate = formattedMD.toISOString();
+
     const response = await fetch(
       `${process.env.NEXT_PUBLIC_MEDIBRAIN_API_BASE_URL}/note`,
       {
@@ -68,6 +74,12 @@ const UploadNote = () => {
       toast.error("something went wrong... try again later");
       return;
     }
+    const { id } = await response.json();
+    const uploadRes = await fetch("http://localhost:8080/api/v1/note/chunk", {
+      method: "POST",
+      body: JSON.stringify({ ...data.note, id }),
+    });
+
     toast.success("successfully added note");
     reset();
   }
@@ -77,7 +89,7 @@ const UploadNote = () => {
         <FieldGroup className="w-full">
           <div className="flex gap-x-2">
             <Controller
-              name="title"
+              name="note.title"
               control={control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
@@ -98,7 +110,7 @@ const UploadNote = () => {
               )}
             />
             <Controller
-              name="creationDate"
+              name="note.creationDate"
               control={control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
@@ -122,7 +134,7 @@ const UploadNote = () => {
           </div>
 
           <Controller
-            name="content"
+            name="note.content"
             control={control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
