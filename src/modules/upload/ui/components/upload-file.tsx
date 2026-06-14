@@ -92,6 +92,7 @@ const UploadFile = () => {
       });
 
       const { jobId } = await response.json();
+      console.table(jobId);
       toast.success("Succesfully uploaded document");
       const resetData: DocumentMeta = getResetData();
 
