@@ -16,7 +16,7 @@ import {
   getResetData,
 } from "@/modules/shared/forms/document-meta-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -24,6 +24,8 @@ const UploadFile = () => {
   const [fileProvided, setFileProvided] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [checkingJob, setCheckingJob] = useState<boolean>(false);
+  const [jobId, setJobId] = useState<null | string>(null);
 
   const {
     reset,
@@ -92,18 +94,63 @@ const UploadFile = () => {
       });
 
       const { jobId } = await response.json();
-      console.table(jobId);
-      toast.success("Succesfully uploaded document");
+      setCheckingJob(true);
+      setJobId(jobId);
+      // toast.success("Succesfully uploaded document");
       const resetData: DocumentMeta = getResetData();
 
       const input = document.getElementById("fileInput") as HTMLInputElement;
       if (input) input.value = "";
+
       setFileProvided(false);
     } catch (e) {
       console.log(e);
       setIsLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (checkingJob) {
+      toast.promise<{ name: string }>(
+        new Promise((resolve, reject) => {
+          const poll = async () => {
+            try {
+              const res = await fetch(
+                `http://localhost:8080/api/v1/job/${jobId}`,
+              );
+              const data = await res.json();
+
+              console.table(data);
+              if (data.status === "completed") {
+                resolve({ name: "Finished indexing" });
+              } else if (data.status === "archived") {
+                reject(new Error("Job failed"));
+              } else {
+                setTimeout(poll, 2000);
+              }
+            } catch (err) {
+              reject(err);
+            }
+          };
+
+          poll();
+        }),
+        {
+          loading: "Processing...",
+          success: (data) => {
+            setCheckingJob(false);
+            setJobId(null);
+            return `Done: ${data.name}`;
+          },
+          error: (err: Error) => {
+            setCheckingJob(false);
+            setJobId(null);
+            return err.message ?? "Job failed";
+          },
+        },
+      );
+    }
+  }, [jobId, checkingJob]);
 
   return (
     <div className="flex flex-col justify-center max-w-md mx-auto items-center text-center">
